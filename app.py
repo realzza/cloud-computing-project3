@@ -19,7 +19,6 @@ app.layout = html.Div(
         style={'textAlign': 'center','fontSize':'30px'}),
         html.Div(id='realtime'),
         dcc.Graph(id='realtime-cpu'),
-        # dcc.Graph(id='live-update-graph2'),
         dcc.Interval(
             id='interval-component',
             interval=3*1000, # in milliseconds
