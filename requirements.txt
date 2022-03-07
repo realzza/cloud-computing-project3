@@ -1,0 +1,11 @@
+redis
+dash
+pandas
+param 
+panel
+hvplot
+datashader
+numpy
+dash_bootstrap_components
+dash
+plotly
