@@ -1,0 +1,1 @@
+docker run -p 5117:5117 ziangzhou/image-proj3
