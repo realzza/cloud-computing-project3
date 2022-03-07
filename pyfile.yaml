@@ -1,0 +1,33 @@
+apiVersion: v1
+data:
+  pyfile: "import numpy as np\nfrom typing import Dict, Any\n\n    \ndef handler(data:
+    dict, context: object) -> Dict[str, Any]:\n    \n    records = {}\n    cpu_env
+    = {}\n    # for the first time, env will be initialized, afterwards it can be
+    directly retrieved and updated\n    # try:\n    if getattr(context.env, \"cpu_buffer\",
+    None) is None:\n        n_cpus = 0\n        context.env[\"ewma\"] = {\"min\":{},\"hour\":{}}\n
+    \       for i in range(100):\n            if not \"cpu_percent-%d\"%i in data:\n
+    \               break\n            n_cpus += 1\n            context.env[\"ewma\"][\"min\"][i]
+    = 0\n            context.env[\"ewma\"][\"hour\"][i] = 0\n        \n        # init
+    VM usage\n        context.env[\"ewma\"][\"vm_usage\"] = 0\n        assert n_cpus
+    > 0, \"problematic data stream stored in redis. Please contract maintainer for
+    assistance\"\n        \n        cpu_env['n_cpus'] = n_cpus\n        context.env['cpu_buffer']
+    = cpu_env\n\n    cpu_env = context.env['cpu_buffer']\n    n_cpus = cpu_env['n_cpus']\n
+    \   ewma_buffer = context.env['ewma']\n\n    records['time'] = data['timestamp']\n
+    \   # 1/(1-beta) = days of avg\n    beta_m = 11/12     # mean for 12 data points,
+    which is one minute\n    beta_h = 719/720   # mean for 720 datapoints, which is
+    ont hour\n    beta_vm = 59/60\n    for i in range(n_cpus):\n        curr_data
+    = data['cpu_percent-%d'%i]\n        records['cpu_%d_1min_ewma'%i] = round(curr_data*beta_m
+    + (1-beta_m)*ewma_buffer['min'][i],4)\n        ewma_buffer['min'][i] = curr_data*beta_m
+    + (1-beta_m)*ewma_buffer['min'][i]\n        records['cpu_%d_1h_ewma'%i] = round(curr_data*beta_h
+    + (1-beta_h)*ewma_buffer['hour'][i],4)\n        ewma_buffer['hour'][i] = curr_data*beta_h
+    + (1-beta_h)*ewma_buffer['hour'][i]\n\n    vm_usage_curr = data['virtual_memory-percent']\n
+    \   records['VM_used_past_5min_avg'] = round(vm_usage_curr*beta_vm + ewma_buffer[\"vm_usage\"]*(1-beta_vm),4)\n
+    \   ewma_buffer[\"vm_usage\"] = vm_usage_curr*beta_vm + ewma_buffer[\"vm_usage\"]*(1-beta_vm)\n
+    \   \n    return records"
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2022-03-07T03:37:14Z"
+  name: pyfile
+  namespace: zz188
+  resourceVersion: "4620669"
+  uid: 2e56a745-d73d-4330-9eb7-8d920a791f1b

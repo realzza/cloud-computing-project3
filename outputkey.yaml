@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  REDIS_OUTPUT_KEY: zz188-proj3-output
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2022-03-07T03:37:14Z"
+  name: outputkey
+  namespace: zz188
+  resourceVersion: "4620670"
+  uid: 9ba7ba8e-adb3-4188-a23f-1dc6a4b6216d
