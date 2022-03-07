@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zz188-proj3-deployment
+spec:
+  replicas: 
+  selector:
+    matchLabels:
+      app: zz188-proj3-dashboard
+  template:
+    metadata:
+      labels:
+        app: zz188-proj3-dashboard
+        
+    spec:
+      containers:
+      - name: project3
+        image: ziangzhou/image-proj3:latest
+        ports:
+        - containerPort: 5117
+        env:
+        - name: REDIS_HOST
+          value: "152.3.65.126"
+        - name: REDIS_PORT
+          value: "6379"
+        - name: REDIS_INPUT_KEY
+          value: "metrics"

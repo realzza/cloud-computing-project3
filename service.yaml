@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: zz188-proj3-service
+spec:
+  selector:
+    app: zz188-proj3-dashboard
+  ports:
+    - protocol: TCP
+      port: 5117
+      targetPort: 8812
